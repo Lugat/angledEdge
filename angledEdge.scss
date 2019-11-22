@@ -1,0 +1,36 @@
+@function str-replace($string, $search, $replace: '') {
+  $index: str-index($string, $search);
+  
+  @if $index {
+    @return str-slice($string, 1, $index - 1) + $replace + str-replace(str-slice($string, $index + str-length($search)), $search, $replace);
+  }
+  
+  @return $string;
+}
+
+@mixin angledEdge($hypotenuse, $fill, $height: 100px, $width: 100%) {
+  
+	$points: (
+    'upper left': '0,1000 1000,1000 1000,0',
+    'upper right': '0,1000 1000,1000 0,0',
+    'lower left': '0,0 1000,1000 1000,0',
+    'lower right': '0,0 1000,0 0,1000'
+	);
+
+  $edge: '<svg xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" viewBox="0 0 1000 1000" fill="#{$fill}"><polygon points="#{map-get($points, $hypotenuse)}"></polygon></svg>';
+  $edge: str-replace($edge, '"', "\'");
+  $edge: str-replace($edge, '#', '%23');
+	$edge: str-replace($edge, '<', '%3C');
+	$edge: str-replace($edge, '>', '%3E');
+  
+  $data: 'data:image/svg+xml,'+$edge;
+  
+  position:absolute;
+  width:$width;
+  height:$height;
+  background:url($data);
+  background-size:100% 100%;
+	content:'';
+	z-index:1;
+  
+}
